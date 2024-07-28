@@ -16,8 +16,8 @@ public class SqlHelper extends SQLiteOpenHelper {
 
     private static final String TABLE_CREATE_CHARACTER =
             "CREATE TABLE CHARACTERS (" +
-            "Id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            "Name TEXT, Image TEXT, Created TEXT);";
+            "Id INTEGER PRIMARY KEY AUTOINCREMENT, IdCharacter INTEGER, " +
+            "Name TEXT, Image TEXT, Created TEXT, Description TEXT);";
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {

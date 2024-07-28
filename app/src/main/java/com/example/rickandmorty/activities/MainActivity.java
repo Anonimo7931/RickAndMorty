@@ -3,8 +3,8 @@ package com.example.rickandmorty.activities;
 import android.os.Bundle;
 
 import com.example.rickandmorty.R;
-import com.example.rickandmorty.application.rickandmortyusecases.getcharacters.GetCharactersUseCase;
-import com.example.rickandmorty.application.rickandmortyusecases.getcharacters.IGetCharactersUseCase;
+import com.example.rickandmorty.application.rickandmortyusecases.getcharacters.CharactersUseCase;
+import com.example.rickandmorty.application.rickandmortyusecases.getcharacters.ICharactersUseCase;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -37,10 +37,8 @@ public class MainActivity extends AppCompatActivity
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
-        IGetCharactersUseCase useCase = new GetCharactersUseCase();
+        ICharactersUseCase useCase = new CharactersUseCase();
 
-        useCase.execute();
-
-
+        useCase.executeSetCharacter(this.getApplicationContext());
     }
 }
