@@ -10,5 +10,5 @@ public interface ICharacterRepository {
     public void addCharacter(Character character);
     public List<Character> getAllCharacters();
     public void updateCharacter(Character character);
-    public void removeCharacter(Character character);
+    public void deleteCharacter(Character character);
 }

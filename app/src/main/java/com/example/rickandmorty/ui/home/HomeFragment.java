@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -29,10 +30,14 @@ public class HomeFragment extends Fragment {
     private Button buttonRefresh;
     private Button buttonNext;
     private Button buttonBack;
+    private Button buttonSave;
+    private Button buttonDelete;
     private Integer indicatorOfCharacterId = 0;
     private ImageView characterImage;
     private List<Character> characters = new ArrayList<>();
+    private EditText descriptionCharacter;
     private TextView tittleImage;
+    private Character globalCharacter;
     private ICharactersUseCase charactersUseCase;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -48,44 +53,40 @@ public class HomeFragment extends Fragment {
         buttonRefresh = binding.getRoot().findViewById(R.id.refresh_button);
         buttonNext = binding.getRoot().findViewById(R.id.next);
         buttonBack = binding.getRoot().findViewById(R.id.back);
+        buttonSave = binding.getRoot().findViewById(R.id.save_button);
+        buttonDelete = binding.getRoot().findViewById(R.id.delete_button);
 
         characterImage = binding.getRoot().findViewById(R.id.image_view);
         tittleImage = binding.getRoot().findViewById(R.id.tittle_text);
+        descriptionCharacter = binding.getRoot().findViewById(R.id.description_text);
+
+        characters = charactersUseCase.executeGetCharacters((MainActivity) getContext());
+
+        updateCharacter();
 
         buttonNext.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
+
                 if(characters.isEmpty())
                     return;
 
                 indicatorOfCharacterId = (indicatorOfCharacterId + 1) % characters.size();
 
-                tittleImage.setText(characters.get(indicatorOfCharacterId).name);
-
-                Picasso.get()
-                        .load(characters.get(indicatorOfCharacterId).image)
-                        .placeholder(R.drawable.placeholder_image)
-                        .into(characterImage);
+                updateCharacter();
             }
         });
 
         buttonBack.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                if(characters.isEmpty())
-                    return;
 
                 indicatorOfCharacterId = indicatorOfCharacterId - 1;
 
                 if(indicatorOfCharacterId < 0)
                     indicatorOfCharacterId = characters.size() - 1;
 
-                tittleImage.setText(characters.get(indicatorOfCharacterId).name);
-
-                Picasso.get()
-                        .load(characters.get(indicatorOfCharacterId).image)
-                        .placeholder(R.drawable.placeholder_image)
-                        .into(characterImage);
+                updateCharacter();
             }
         });
 
@@ -95,19 +96,78 @@ public class HomeFragment extends Fragment {
             public void onClick(View view) {
                 characters = charactersUseCase.executeGetCharacters((MainActivity) getContext());
 
-                if(characters.isEmpty())
+                indicatorOfCharacterId = 0;
+
+                updateCharacter();
+            }
+        });
+
+        buttonSave.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+
+                if(globalCharacter == null)
                     return;
 
-                tittleImage.setText(characters.get(indicatorOfCharacterId).name);
+                globalCharacter.description = descriptionCharacter.getText().toString();
 
-                Picasso.get()
-                        .load(characters.get(indicatorOfCharacterId).image)
-                        .placeholder(R.drawable.placeholder_image)
-                        .into(characterImage);
+                charactersUseCase.executeUpdateCharacter((MainActivity) getContext(), globalCharacter);
+
+                characters = charactersUseCase.executeGetCharacters((MainActivity) getContext());
+            }
+        });
+
+        buttonDelete.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+
+                if(globalCharacter == null)
+                    return;
+
+                charactersUseCase.executeDeleteCharacter((MainActivity) getContext(), globalCharacter);
+
+                characters = charactersUseCase.executeGetCharacters((MainActivity) getContext());
+
+                indicatorOfCharacterId = 0;
+
+                updateCharacter();
             }
         });
 
         return root;
+    }
+
+    private void updateCharacter(){
+
+        if(characters.isEmpty()) {
+            globalCharacter = null;
+
+            tittleImage.setText(R.string.example_tittle_name);
+
+            descriptionCharacter.setText("");
+
+            Picasso.get()
+                    .load(R.drawable.placeholder_image)
+                    .into(characterImage);
+
+
+            charactersUseCase.executeSetCharacter(getContext());
+
+            return;
+        }
+
+        globalCharacter = characters.get(indicatorOfCharacterId);
+
+        tittleImage.setText(globalCharacter.name);
+
+        descriptionCharacter.setText(globalCharacter.description);
+
+        Picasso.get()
+                .load(globalCharacter.image)
+                .placeholder(R.drawable.placeholder_image)
+                .into(characterImage);
     }
 
 

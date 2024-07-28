@@ -61,10 +61,17 @@
 
         </ImageView>
 
+        <EditText
+            android:id="@+id/description_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/description"
+            app:layout_constraintTop_toBottomOf="@+id/image_view"/>
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            app:layout_constraintTop_toBottomOf="@+id/image_view"
+            app:layout_constraintTop_toBottomOf="@+id/description_text"
             >
             <LinearLayout
                 android:layout_width="match_parent"

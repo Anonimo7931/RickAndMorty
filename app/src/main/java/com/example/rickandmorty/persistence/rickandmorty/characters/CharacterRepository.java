@@ -143,7 +143,7 @@ public class CharacterRepository implements ICharacterRepository {
     }
 
     @Override
-    public void removeCharacter(Character character) {
+    public void deleteCharacter(Character character) {
         String selection = "IdCharacter = ?";
         String[] selectionArgs = { String.valueOf(character.idCharacter) };
 
