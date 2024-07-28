@@ -1,7 +1,10 @@
 <resources>
     <string name="app_name">RickAndMorty</string>
-    <string name="title_home">Home</string>
+    <string name="title_characters">Personajes</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
     <string name="example_tittle_name">Titulo la imagen</string>
+    <string name="description">Descripcion</string>
+    <string name="back">Atras</string>
+    <string name="next">Siguiente</string>
 </resources>

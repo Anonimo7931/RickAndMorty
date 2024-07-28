@@ -1,7 +1,6 @@
 package com.example.rickandmorty.ui.home;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,13 +20,19 @@ import com.example.rickandmorty.databinding.FragmentHomeBinding;
 import com.example.rickandmorty.domain.sqlite.characters.Character;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
     private Button buttonRefresh;
+    private Button buttonNext;
+    private Button buttonBack;
+    private Integer indicatorOfCharacterId = 0;
     private ImageView characterImage;
+    private List<Character> characters = new ArrayList<>();
+    private TextView tittleImage;
     private ICharactersUseCase charactersUseCase;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -38,26 +43,65 @@ public class HomeFragment extends Fragment {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textHome;
-        homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
-
         charactersUseCase = new CharactersUseCase();
 
         buttonRefresh = binding.getRoot().findViewById(R.id.refresh_button);
+        buttonNext = binding.getRoot().findViewById(R.id.next);
+        buttonBack = binding.getRoot().findViewById(R.id.back);
 
         characterImage = binding.getRoot().findViewById(R.id.image_view);
+        tittleImage = binding.getRoot().findViewById(R.id.tittle_text);
+
+        buttonNext.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                if(characters.isEmpty())
+                    return;
+
+                indicatorOfCharacterId = (indicatorOfCharacterId + 1) % characters.size();
+
+                tittleImage.setText(characters.get(indicatorOfCharacterId).name);
+
+                Picasso.get()
+                        .load(characters.get(indicatorOfCharacterId).image)
+                        .placeholder(R.drawable.placeholder_image)
+                        .into(characterImage);
+            }
+        });
+
+        buttonBack.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                if(characters.isEmpty())
+                    return;
+
+                indicatorOfCharacterId = indicatorOfCharacterId - 1;
+
+                if(indicatorOfCharacterId < 0)
+                    indicatorOfCharacterId = characters.size() - 1;
+
+                tittleImage.setText(characters.get(indicatorOfCharacterId).name);
+
+                Picasso.get()
+                        .load(characters.get(indicatorOfCharacterId).image)
+                        .placeholder(R.drawable.placeholder_image)
+                        .into(characterImage);
+            }
+        });
 
         buttonRefresh.setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View view) {
-                List<Character> characters = charactersUseCase.executeGetCharacters((MainActivity) getContext());
+                characters = charactersUseCase.executeGetCharacters((MainActivity) getContext());
 
                 if(characters.isEmpty())
                     return;
 
+                tittleImage.setText(characters.get(indicatorOfCharacterId).name);
+
                 Picasso.get()
-                        .load(characters.get(0).image)
+                        .load(characters.get(indicatorOfCharacterId).image)
                         .placeholder(R.drawable.placeholder_image)
                         .into(characterImage);
             }
