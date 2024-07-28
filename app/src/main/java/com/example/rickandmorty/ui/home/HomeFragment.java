@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,6 +19,7 @@ import com.example.rickandmorty.application.rickandmortyusecases.getcharacters.C
 import com.example.rickandmorty.application.rickandmortyusecases.getcharacters.ICharactersUseCase;
 import com.example.rickandmorty.databinding.FragmentHomeBinding;
 import com.example.rickandmorty.domain.sqlite.characters.Character;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -25,6 +27,7 @@ public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
     private Button buttonRefresh;
+    private ImageView characterImage;
     private ICharactersUseCase charactersUseCase;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -42,6 +45,7 @@ public class HomeFragment extends Fragment {
 
         buttonRefresh = binding.getRoot().findViewById(R.id.refresh_button);
 
+        characterImage = binding.getRoot().findViewById(R.id.image_view);
 
         buttonRefresh.setOnClickListener(new View.OnClickListener(){
 
@@ -49,7 +53,13 @@ public class HomeFragment extends Fragment {
             public void onClick(View view) {
                 List<Character> characters = charactersUseCase.executeGetCharacters((MainActivity) getContext());
 
-                Integer size = characters.size();
+                if(characters.isEmpty())
+                    return;
+
+                Picasso.get()
+                        .load(characters.get(0).image)
+                        .placeholder(R.drawable.placeholder_image)
+                        .into(characterImage);
             }
         });
 

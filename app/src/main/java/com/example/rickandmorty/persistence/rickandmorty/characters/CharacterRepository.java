@@ -35,13 +35,15 @@ public class CharacterRepository implements ICharacterRepository {
     {
         ContentValues values = new ContentValues();
 
-        values.put("IdCharacter", character.idCharacter);
-        values.put("Name", character.name);
-        values.put("Image", character.image);
-        values.put("Description", character.description);
-        values.put("Created", character.created);
+        if(!existCharacter(character.idCharacter)){
+            values.put("IdCharacter", character.idCharacter);
+            values.put("Name", character.name);
+            values.put("Image", character.image);
+            values.put("Description", character.description);
+            values.put("Created", character.created);
 
-        database.insert("CHARACTERS", null, values);
+            database.insert("CHARACTERS", null, values);
+        }
     }
 
     @Override
@@ -53,8 +55,8 @@ public class CharacterRepository implements ICharacterRepository {
         try {
             db = dbHelper.getReadableDatabase();
             cursor = db.query(
-                    "users",               // Table name
-                    new String[]{"id", "name", "email"}, // Columns to return
+                    "CHARACTERS",               // Table name
+                    new String[]{"Id", "IdCharacter", "Name", "Image", "Created", "Description"}, // Columns to return
                     null,                  // Selection criteria (no filter)
                     null,                  // Selection args (no args)
                     null,                  // Group by
@@ -69,12 +71,12 @@ public class CharacterRepository implements ICharacterRepository {
             do {
                 Character character = new Character();
 
-                character.id = cursor.getInt(1);
-                character.idCharacter = cursor.getInt(2);
-                character.name = cursor.getString(3);
-                character.image = cursor.getString(4);
-                character.created = cursor.getString(5);
-                character.description = cursor.getString(6);
+                character.id = cursor.getInt(0);
+                character.idCharacter = cursor.getInt(1);
+                character.name = cursor.getString(2);
+                character.image = cursor.getString(3);
+                character.created = cursor.getString(4);
+                character.description = cursor.getString(5);
 
                 characters.add(character);
             } while (cursor.moveToNext());
